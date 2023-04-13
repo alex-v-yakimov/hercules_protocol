@@ -1,0 +1,419 @@
+from ctypes import c_char_p, c_uint8, c_int16, c_int32, c_int64
+from uuid import UUID
+from hercules_protocol import Vector
+from hercules_protocol.scheme import (
+    Key,
+    Byte,
+    Short,
+    Integer,
+    Long,
+    String,
+    VectorDummy,
+    VectorShort,
+    VectorLong,
+    VectorString,
+)
+
+from_balconlib = {
+    'bytes': (
+        b'\x01'  # version
+        b'\x00\x3b\x25\xf5\xe4\x93\x2a\x15'  # timestamp
+        b'\x89\x0d\x5b\xc9\x2e\x94\x43\xce\x90\x93\x99\x84\xc3\xf6\xbc\x1c'  # UUID
+        b'\x00\x0f'  # tags count
+
+        b'\x04\x74\x69\x6d\x65'  # 'time'
+        b'\x05\x00\x3b\x25\xf5\xe4\x93\x2a\x15'
+
+        b'\x04\x68\x6f\x73\x74'  # 'host'
+        b'\x09'
+        b'\x00\x00\x00\x18'
+        b'\x65\x78\x74\x65\x72\x6e\x2d\x61\x70\x69\x2e\x74\x65\x73\x74\x6b\x6f\x6e\x74\x75\x72\x2e\x72\x75'
+
+        b'\x03\x75\x72\x69'  # 'uri'
+        b'\x09'
+        b'\x00\x00\x00\x85'
+        b'\x2f\x76\x31\x2f\x64\x39\x37\x31\x62\x66\x65\x36\x2d\x35\x35\x32\x31\x2d\x34\x65\x33\x63\x2d\x62\x30\x32\x38\x2d\x33\x63\x31\x34\x39\x38\x65\x61\x32\x35\x36\x32\x2f\x64\x6f\x63\x66\x6c\x6f\x77\x73\x2f\x37\x33\x38\x38\x30\x36\x31\x38\x2d\x61\x61\x64\x34\x2d\x34\x33\x66\x38\x2d\x39\x36\x38\x63\x2d\x39\x31\x32\x31\x38\x63\x66\x36\x35\x38\x30\x66\x2f\x64\x6f\x63\x75\x6d\x65\x6e\x74\x73\x2f\x36\x38\x34\x37\x32\x34\x61\x61\x2d\x36\x62\x36\x32\x2d\x34\x62\x62\x64\x2d\x61\x63\x33\x36\x2d\x30\x32\x33\x34\x36\x35\x31\x36\x31\x64\x37\x62'  # noqa: E501
+
+        b'\x04\x61\x72\x67\x73'  # 'args'
+        b'\x80'
+        b'\x01'
+        b'\x00\x00\x00\x00'
+
+        b'\x06\x73\x74\x61\x74\x75\x73'  # 'status'
+        b'\x03\x00\xc8'
+
+        b'\x06\x6d\x65\x74\x68\x6f\x64'  # 'method'
+        b'\x02\x01'
+
+        b'\x05\x70\x72\x6f\x74\x6f'  # 'proto'
+        b'\x09'
+        b'\x00\x00\x00\x08'
+        b'\x48\x54\x54\x50\x2f\x31\x2e\x31'
+
+        b'\x0b\x72\x65\x71\x5f\x68\x65\x61\x64\x65\x72\x73'  # 'req_headers'
+        b'\x80'
+        b'\x01'
+        b'\x00\x00\x00\x07'
+
+        b'\x00\x02'                     # 1
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x0c'
+        b'\x63\x6f\x6e\x74\x65\x6e\x74\x2d\x74\x79\x70\x65'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x10'
+        b'\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e'
+
+        b'\x00\x02'                     # 2
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x0d'
+        b'\x63\x61\x63\x68\x65\x2d\x63\x6f\x6e\x74\x72\x6f\x6c'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x11'
+        b'\x6e\x6f\x2d\x63\x61\x63\x68\x65\x2c\x6e\x6f\x2d\x63\x61\x63\x68\x65'
+
+        b'\x00\x02'                     # 3
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x0f'
+        b'\x61\x63\x63\x65\x70\x74\x2d\x65\x6e\x63\x6f\x64\x69\x6e\x67'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x0d'
+        b'\x67\x7a\x69\x70\x2c\x20\x64\x65\x66\x6c\x61\x74\x65'
+
+        b'\x00\x02'                     # 4
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x0f'
+        b'\x78\x2d\x6b\x6f\x6e\x74\x75\x72\x2d\x61\x70\x69\x6b\x65\x79'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x24'
+        b'\x30\x30\x30\x30\x30\x30\x30\x30\x2d\x30\x30\x30\x30\x2d\x30\x30\x30\x30\x2d\x30\x30\x30\x30\x2d\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30'  # noqa: E501
+
+        b'\x00\x02'                     # 5
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x06'
+        b'\x63\x6f\x6f\x6b\x69\x65'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x49'
+        b'\x61\x75\x74\x68\x2e\x73\x69\x64\x3d\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30'  # noqa: E501
+
+
+        b'\x00\x02'                     # 6
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x0d'
+        b'\x61\x75\x74\x68\x6f\x72\x69\x7a\x61\x74\x69\x6f\x6e'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x49'
+        b'\x61\x75\x74\x68\x2e\x73\x69\x64\x20\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30\x30'  # noqa: E501
+
+
+        b'\x00\x02'                     # 7
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x04'
+        b'\x68\x6f\x73\x74'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x18'
+        b'\x65\x78\x74\x65\x72\x6e\x2d\x61\x70\x69\x2e\x74\x65\x73\x74\x6b\x6f\x6e\x74\x75\x72\x2e\x72\x75'
+
+        b'\x0b\x72\x65\x73\x5f\x68\x65\x61\x64\x65\x72\x73'  # 'res_headers'
+        b'\x80'
+        b'\x01'
+        b'\x00\x00\x00\x02'
+
+        b'\x00\x02'  # 1
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x0c'
+        b'\x63\x6f\x6e\x74\x65\x6e\x74\x2d\x74\x79\x70\x65'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x1f'
+        b'\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e\x3b\x20\x63\x68\x61\x72\x73\x65\x74\x3d\x75\x74\x66\x2d\x38'  # noqa: E501
+
+        b'\x00\x02'  # 2
+        b'\x01\x6b'
+        b'\x09'
+        b'\x00\x00\x00\x11'
+        b'\x78\x2d\x6b\x6f\x6e\x74\x75\x72\x2d\x74\x72\x61\x63\x65\x2d\x69\x64'
+        b'\x01\x76'
+        b'\x09'
+        b'\x00\x00\x00\x20'
+        b'\x33\x35\x64\x30\x62\x32\x61\x63\x61\x35\x39\x33\x35\x38\x63\x66\x33\x34\x34\x30\x34\x63\x31\x36\x38\x38\x65\x35\x35\x32\x34\x34'  # noqa: E501
+
+        b'\x0f'  # 'upstream_status'
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x73\x74\x61\x74\x75\x73'
+        b'\x80'
+        b'\x03'
+        b'\x00\x00\x00\x01'
+        b'\x00\xc8'
+
+        b'\x0d'  # 'upstream_addr'
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x61\x64\x64\x72'
+        b'\x80'
+        b'\x09'
+        b'\x00\x00\x00\x01'
+        b'\x00\x00\x00\x0f'
+        b'\x31\x30\x2e\x32\x31\x39\x2e\x35\x2e\x31\x38\x32\x3a\x38\x30'
+
+        b'\x08'  # 'counters'
+        b'\x63\x6f\x75\x6e\x74\x65\x72\x73'
+        b'\x01'
+        b'\x00\x09'
+
+        b'\x07'  # 1
+        b'\x72\x65\x71\x5f\x6c\x65\x6e'
+        b'\x04'
+        b'\x00\x00\x01\xfc'
+
+        b'\x15'  # 2
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x63\x6f\x6e\x6e\x65\x63\x74\x5f\x74\x69\x6d\x65'
+        b'\x80'
+        b'\x05'
+        b'\x00\x00\x00\x01'
+        b'\x00\x00\x00\x00\x00\x00\x00\x00'
+
+        b'\x12'  # 3
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x72\x65\x71\x5f\x62\x79\x74\x65\x73'
+        b'\x80'
+        b'\x05'
+        b'\x00\x00\x00\x01'
+        b'\x00\x00\x00\x00\x00\x00\x02\xca'
+
+        b'\x12'  # 4
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x72\x65\x73\x5f\x62\x79\x74\x65\x73'
+        b'\x80'
+        b'\x05'
+        b'\x00\x00\x00\x01'
+        b'\x00\x00\x00\x00\x00\x00\x0e\xd4'
+
+        b'\x18'  # 5
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x72\x65\x73\x5f\x68\x65\x61\x64\x65\x72\x5f\x74\x69\x6d\x65'
+        b'\x80'
+        b'\x05'
+        b'\x00\x00\x00\x01'
+        b'\x00\x00\x00\x00\x00\x00\x00\x5d'
+
+        b'\x10'  # 6
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x72\x65\x73\x5f\x6c\x65\x6e'
+        b'\x80'
+        b'\x05'
+        b'\x00\x00\x00\x01'
+        b'\x00\x00\x00\x00\x00\x00\x0c\xec'
+
+        b'\x11'  # 7
+        b'\x75\x70\x73\x74\x72\x65\x61\x6d\x5f\x72\x65\x73\x5f\x74\x69\x6d\x65'
+        b'\x80'
+        b'\x05'
+        b'\x00\x00\x00\x01'
+        b'\x00\x00\x00\x00\x00\x00\x00\x5d'
+
+        b'\x09'  # 8
+        b'\x72\x65\x73\x5f\x62\x79\x74\x65\x73'
+        b'\x05'
+        b'\x00\x00\x00\x00\x00\x00\x06\x0e'
+
+        b'\x09'  # 9
+        b'\x66\x75\x6c\x6c\x5f\x74\x69\x6d\x65'
+        b'\x05'
+        b'\x00\x00\x00\x00\x00\x00\x00\x5d'
+
+        b'\x0a'  # 'connection'
+        b'\x63\x6f\x6e\x6e\x65\x63\x74\x69\x6f\x6e'
+        b'\x01'
+        b'\x00\x08'
+
+        b'\x04'  # 1
+        b'\x70\x6f\x72\x74'
+        b'\x03'
+        b'\x01\xbb'
+
+        b'\x04'  # 2
+        b'\x61\x64\x64\x72'
+        b'\x09'
+        b'\x00\x00\x00\x00'
+
+        b'\x09'  # 3
+        b'\x63\x6c\x69\x65\x6e\x74\x5f\x69\x70'
+        b'\x09'
+        b'\x00\x00\x00\x0d'
+        b'\x31\x34\x31\x2e\x38\x2e\x31\x36\x37\x2e\x32\x31\x39'
+
+        b'\x0b'  # 4
+        b'\x63\x6c\x69\x65\x6e\x74\x5f\x70\x6f\x72\x74'
+        b'\x03'
+        b'\x05\x6d'
+
+        b'\x0b'  # 5
+        b'\x74\x6c\x73\x5f\x76\x65\x72\x73\x69\x6f\x6e'
+        b'\x09'
+        b'\x00\x00\x00\x07'
+        b'\x54\x4c\x53\x76\x31\x2e\x32'
+
+        b'\x06'  # 6
+        b'\x63\x69\x70\x68\x65\x72'
+        b'\x09'
+        b'\x00\x00\x00\x1b'
+        b'\x45\x43\x44\x48\x45\x2d\x52\x53\x41\x2d\x41\x45\x53\x31\x32\x38\x2d\x47\x43\x4d\x2d\x53\x48\x41\x32\x35\x36'
+
+        b'\x06'  # 7
+        b'\x73\x63\x68\x65\x6d\x65'
+        b'\x09'
+        b'\x00\x00\x00\x00'
+
+        b'\x0a'  # 8
+        b'\x63\x6f\x6e\x6e\x65\x63\x74\x69\x6f\x6e'
+        b'\x05'
+        b'\x00\x00\x00\x00\x2c\x8a\x7c\xbb'
+
+        b'\x0a'  # 'request_id'
+        b'\x72\x65\x71\x75\x65\x73\x74\x5f\x69\x64'
+        b'\x09'
+        b'\x00\x00\x00\x20'
+        b'\x38\x33\x65\x35\x30\x36\x66\x35\x35\x38\x33\x65\x61\x64\x66\x33\x63\x35\x65\x34\x36\x36\x38\x65\x65\x39\x35\x38\x35\x64\x37\x33'  # noqa: E501
+
+        b'\x04'  # 'node'
+        b'\x6e\x6f\x64\x65'
+        b'\x09'
+        b'\x00\x00\x00\x05'
+        b'\x66\x64\x65\x76\x31'
+
+    ),
+    'tuple': (
+        1,
+        16648761657993749,
+        UUID(bytes=b'\x89\x0d\x5b\xc9\x2e\x94\x43\xce\x90\x93\x99\x84\xc3\xf6\xbc\x1c'),
+        {
+            'time':
+            c_int64(16648761657993749),
+
+            'host':
+            c_char_p(b'extern-api.testkontur.ru'),
+
+            'uri':
+            c_char_p(b'/v1/d971bfe6-5521-4e3c-b028-3c1498ea2562/docflows/73880618-aad4-43f8-968c-91218cf6580f/documents/684724aa-6b62-4bbd-ac36-023465161d7b'),  # noqa: E501
+
+            'args':
+            Vector([], type_=dict),
+
+            'status':
+            c_int16(200),
+
+            'method':
+            c_uint8(1),
+
+            'proto':
+            c_char_p(b'HTTP/1.1'),
+
+            'req_headers':
+            Vector([
+                {'k': c_char_p(b'content-type'), 'v': c_char_p(b'application/json')},
+                {'k': c_char_p(b'cache-control'), 'v': c_char_p(b'no-cache,no-cache')},
+                {'k': c_char_p(b'accept-encoding'), 'v': c_char_p(b'gzip, deflate')},
+                {'k': c_char_p(b'x-kontur-apikey'), 'v': c_char_p(b'00000000-0000-0000-0000-000000000000')},
+                {'k': c_char_p(b'cookie'), 'v': c_char_p(b'auth.sid=0000000000000000000000000000000000000000000000000000000000000000')},  # noqa: E501
+                {'k': c_char_p(b'authorization'), 'v': c_char_p(b'auth.sid 0000000000000000000000000000000000000000000000000000000000000000')},  # noqa: E501
+                {'k': c_char_p(b'host'), 'v': c_char_p(b'extern-api.testkontur.ru')}
+            ], type_=dict),
+
+            'res_headers':
+            Vector([
+                {'k': c_char_p(b'content-type'), 'v': c_char_p(b'application/json; charset=utf-8')},
+                {'k': c_char_p(b'x-kontur-trace-id'), 'v': c_char_p(b'35d0b2aca59358cf34404c1688e55244')}
+            ], type_=dict),
+
+            'upstream_status':
+            Vector([c_int16(200)], type_=c_int16),
+
+            'upstream_addr':
+            Vector([c_char_p(b'10.219.5.182:80')], type_=c_char_p),
+
+            'counters': {
+                'req_len': c_int32(508),
+                'upstream_connect_time': Vector([c_int64(0)], type_=c_int64),
+                'upstream_req_bytes': Vector([c_int64(714)], type_=c_int64),
+                'upstream_res_bytes': Vector([c_int64(3796)], type_=c_int64),
+                'upstream_res_header_time': Vector([c_int64(93)], type_=c_int64),
+                'upstream_res_len': Vector([c_int64(3308)], type_=c_int64),
+                'upstream_res_time': Vector([c_int64(93)], type_=c_int64),
+                'res_bytes': c_int64(1550),
+                'full_time': c_int64(93)
+            },
+
+            'connection': {
+                'port': c_int16(443),
+                'addr': c_char_p(b''),
+                'client_ip': c_char_p(b'141.8.167.219'),
+                'client_port': c_int16(1389),
+                'tls_version': c_char_p(b'TLSv1.2'),
+                'cipher': c_char_p(b'ECDHE-RSA-AES128-GCM-SHA256'),
+                'scheme': c_char_p(b''),
+                'connection': c_int64(747273403)
+            },
+
+            'request_id': c_char_p(b'83e506f5583eadf3c5e4668ee9585d73'),
+
+            'node': c_char_p(b'fdev1')
+
+        }
+
+    ),
+    'scheme': {
+        Key('time'): Long,
+        Key('host'): String,
+        Key('uri'): String,
+        Key('args'): VectorDummy,
+        Key('status'): Short,
+        Key('method'): Byte,
+        Key('proto'): String,
+        Key('req_headers'): [
+            {Key('k'): String, Key('v'): String},
+            {Key('k'): String, Key('v'): String},
+            {Key('k'): String, Key('v'): String},
+            {Key('k'): String, Key('v'): String},
+            {Key('k'): String, Key('v'): String},
+            {Key('k'): String, Key('v'): String},
+            {Key('k'): String, Key('v'): String},
+        ],
+        Key('res_headers'): [
+            {Key('k'): String, Key('v'): String},
+            {Key('k'): String, Key('v'): String},
+        ],
+        Key('upstream_status'): VectorShort,
+        Key('upstream_addr'): VectorString,
+        Key('counters'): {
+            Key('req_len'): Integer,
+            Key('upstream_connect_time'): VectorLong,
+            Key('upstream_req_bytes'): VectorLong,
+            Key('upstream_res_bytes'): VectorLong,
+            Key('upstream_res_header_time'): VectorLong,
+            Key('upstream_res_len'): VectorLong,
+            Key('upstream_res_time'): VectorLong,
+            Key('res_bytes'): Long,
+            Key('full_time'): Long,
+        },
+        Key('connection'): {
+            Key('port'): Short,
+            Key('addr'): String,
+            Key('client_ip'): String,
+            Key('client_port'): Short,
+            Key('tls_version'): String,
+            Key('cipher'): String,
+            Key('scheme'): String,
+            Key('connection'): Long,
+        },
+        Key('request_id'): String,
+        Key('node'): String,
+    }
+}
